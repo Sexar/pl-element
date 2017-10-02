@@ -71,7 +71,7 @@ gulp.task('ts', () => {
     ];
 
     // Output file.
-    let outputFile = 'pl-contact-form.min.ts';
+    let outputFile = 'pl-element.min.ts';
 
     return gulp.src(srcFiles)
         .pipe(plumber())
