@@ -3,9 +3,14 @@
  */
 module pl {
 
-    export class ElementCollection {
+    export class ElementCollection extends Array {
 
-
+        /**
+         * Create an element collection instance.
+         */
+        constructor() {
+            super();
+        }
 
     }
 
