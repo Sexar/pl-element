@@ -32,6 +32,14 @@ module pl {
         }
 
         /**
+         * Append an element.
+         * @param {Element} element
+         */
+        public append(element: Element) {
+            this.element.appendChild(element.element);
+        }
+
+        /**
          * Find first element match
          * @param {string} selector
          * @returns {Element}
@@ -41,10 +49,12 @@ module pl {
         }
 
         /**
-         *
+         * Find elements match.
+         * @param {string} selector
+         * @returns {ElementCollection}
          */
-        public findAll() {
-
+        public findAll(selector: string): ElementCollection {
+            return ElementCollection.fromNodeList(<NodeList>this.element.querySelectorAll(selector));
         }
 
         /**
@@ -105,6 +115,14 @@ module pl {
 
             if ("attachEvent" in el) el['attachEvent'](`on${type}`, handler);
             else el.addEventListener(type, handler, useCapture);
+        }
+
+        /**
+         * Get parent element
+         * @returns {Element}
+         */
+        public parent() {
+            return new Element(this.element.parentNode as HTMLElement);
         }
 
         /**

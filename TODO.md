@@ -1,6 +1,6 @@
 # TODO List
 
-- [ ] Selecting
+- [x] Selecting
 - [ ] Traversing
 - [ ] Manipulation
 - [ ] Attributes
