@@ -24,7 +24,7 @@ module pl {
          * Adds the specified class to an element.
          * @param {string} className
          */
-        public addClass(className: string) {
+        addClass(className: string) {
             let el = this.element;
 
             if (el.classList) el.classList.add(className);
@@ -33,28 +33,44 @@ module pl {
 
         /**
          * Append an element.
-         * @param {Element} element
+         * @param {pl.Element} element
          */
-        public append(element: Element) {
+        append(element: Element) {
             this.element.appendChild(element.element);
+        }
+
+        /**
+         * Get children children elements.
+         * @returns {pl.ElementCollection}
+         */
+        children(): ElementCollection {
+            return ElementCollection.fromNodeList(this.element.childNodes);
         }
 
         /**
          * Find first element match
          * @param {string} selector
-         * @returns {Element}
+         * @returns {pl.Element}
          */
-        public find(selector: string) {
+        find(selector: string) {
             return new Element(<HTMLElement>this.element.querySelector(selector));
         }
 
         /**
          * Find elements match.
          * @param {string} selector
-         * @returns {ElementCollection}
+         * @returns {pl.ElementCollection}
          */
-        public findAll(selector: string): ElementCollection {
+        findAll(selector: string): ElementCollection {
             return ElementCollection.fromNodeList(<NodeList>this.element.querySelectorAll(selector));
+        }
+
+        /**
+         * Get first child of element.
+         * @returns {Element}
+         */
+        firstChild(): Element {
+            return new Element(<HTMLElement>this.element.firstChild);
         }
 
         /**
@@ -62,7 +78,7 @@ module pl {
          * @param {string} className
          * @returns {boolean}
          */
-        public hasClass(className: string): boolean {
+        hasClass(className: string): boolean {
             let el = this.element;
 
             return el.classList
@@ -74,7 +90,7 @@ module pl {
          * Insert an HTML structure before a given DOM tree element.
          * @param {HTMLElement|Element} refElem
          */
-        public insertAfter(refElem: any) {
+        insertAfter(refElem: any) {
             let el = this.element;
             let refEl = (refElem instanceof Element) ? refElem.element : refElem;
 
@@ -85,7 +101,7 @@ module pl {
          * Insert an HTML structure after a given DOM tree element.
          * @param {HTMLElement|Element} refElem
          */
-        public insertBefore(refElem: any) {
+        insertBefore(refElem: any) {
             let el = this.element;
             let refEl = (refElem instanceof Element) ? refElem.element : refElem;
 
@@ -93,11 +109,35 @@ module pl {
         }
 
         /**
+         * Get next sibling.
+         * @returns {pl.Element}
+         */
+        nextSibling(): Element {
+            return this.element.nextSibling
+                ? new Element(<HTMLElement>this.element.nextSibling)
+                : null;
+        }
+
+        /**
+         * Get next siblings.
+         * @param {function} filter
+         * @returns {pl.ElementCollection}
+         */
+        nextSiblings(filter): ElementCollection {
+            let siblings: ElementCollection = new ElementCollection();
+            let el: Element = this.nextSibling();
+
+            do { if (!filter || filter(el)) { siblings.push(el); } } while (el = el.nextSibling());
+
+            return siblings;
+        }
+
+        /**
          * Remove an event handler.
          * @param {string} type
          * @param {function} handler
          */
-        public off(type, handler) {
+        off(type, handler) {
             let el = this.element;
 
             if ("detachEvent" in el) el['detachEvent'](`on${type}`, handler);
@@ -110,7 +150,7 @@ module pl {
          * @param {function} handler
          * @param {boolean} useCapture
          */
-        public on(type, handler, useCapture = false) {
+        on(type, handler, useCapture = false) {
             let el = this.element;
 
             if ("attachEvent" in el) el['attachEvent'](`on${type}`, handler);
@@ -119,17 +159,41 @@ module pl {
 
         /**
          * Get parent element
-         * @returns {Element}
+         * @returns {pl.Element}
          */
-        public parent() {
-            return new Element(this.element.parentNode as HTMLElement);
+        parent(): Element {
+            return new Element(<HTMLElement>this.element.parentNode);
+        }
+
+        /**
+         * Get previous sibling.
+         * @returns {pl.Element}
+         */
+        prevSibling(): Element {
+            return this.element.previousSibling
+                ? new Element(<HTMLElement>this.element.previousSibling)
+                : null;
+        }
+
+        /**
+         * Get previous siblings.
+         * @param {function} filter
+         * @returns {pl.ElementCollection}
+         */
+        prevSiblings(filter): ElementCollection {
+            let siblings: ElementCollection = new ElementCollection();
+            let el: Element = this.prevSibling();
+
+            do { if (!filter || filter(el)) { siblings.push(el); } } while (el = el.prevSibling());
+
+            return siblings;
         }
 
         /**
          * Remove class from element.
          * @param {string} className
          */
-        public removeClass(className: string) {
+        removeClass(className: string) {
             let el = this.element;
 
             if (el.classList) el.classList.remove(className);
@@ -137,10 +201,38 @@ module pl {
         }
 
         /**
+         * Get siblings of element or retrieve siblings that match a given selector.
+         * @param {function} filter
+         * @returns {pl.ElementCollection}
+         */
+        siblings(filter): ElementCollection {
+            let siblings: ElementCollection = new ElementCollection();
+            let parent: Element = this.parent();
+            let el: Element = parent.firstChild();
+
+            do { if (!filter || filter(el)) siblings.push(el); } while (el = el.nextSibling());
+
+            return siblings;
+        }
+
+        /**
+         * Get or set element text.
+         * @param {any} value
+         * @returns {undefined|text}
+         */
+        text(value: any) {
+            if ("string" === typeof value) {
+                this._element.innerText = value;
+            } else {
+                return this._element.innerText;
+            }
+        }
+
+        /**
          * Add or remove class from element.
          * @param {string} className
          */
-        public toggleClass(className: string) {
+        toggleClass(className: string) {
             let el = this.element;
 
             if (el.classList) el.classList.toggle(className);
@@ -164,7 +256,6 @@ module pl {
         get element(): T {
             return this._element;
         }
-
         // endregion
 
     }

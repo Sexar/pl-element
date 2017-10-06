@@ -63,11 +63,27 @@
             (function() {
                 'use strict';
 
-                let el = new pl.Element(document.createElement('div'));
+                let createElement = function(tag) { return new pl.Element(document.createElement(tag)); }
 
-                window.el = el;
+                let list = createElement('ul');
+                let lastItem = null;
 
-                document.body.append(el.element);
+                document.body.append(list.element);
+
+                for (let i = 0; i < 10; i++) {
+                    let item = createElement('li');
+
+                    item.addClass('item-' + i);
+                    item.text('Item ' + i);
+
+                    list.append( item );
+
+                    if (i === 5)
+                        lastItem = item;
+
+                }
+
+                console.log(list.children());
 
             })();
         </script>

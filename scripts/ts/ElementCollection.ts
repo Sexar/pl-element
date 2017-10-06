@@ -8,13 +8,28 @@ module pl {
         /**
          * Create an element collection from a node list.
          * @param {NodeList} list
-         * @returns {ElementCollection}
+         * @returns {pl.ElementCollection}
          */
         static fromNodeList(list: NodeList): ElementCollection {
             let collection = new ElementCollection();
 
             list.forEach(element => {
                 collection.push(new Element(element as HTMLElement));
+            });
+
+            return collection;
+        }
+
+        /**
+         * Create an element collection from an array.
+         * @param {Array<Element>} list
+         * @returns {pl.ElementCollection}
+         */
+        static fromArray(list: Array): ElementCollection {
+            let collection = new ElementCollection();
+
+            list.forEach(element => {
+                collection.push(new Element(element as HTMLElement))
             });
 
             return collection;
