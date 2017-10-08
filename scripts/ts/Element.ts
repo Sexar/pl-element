@@ -5,6 +5,9 @@ module pl {
 
     export class Element<T extends HTMLElement> {
 
+        // region Static
+        // endregion
+
         // region Fields
         // endregion
 
@@ -20,6 +23,23 @@ module pl {
         }
 
         // region Methods
+        /**
+         * Set one or more attributes to element.
+         * @param {any} attrName
+         * @param {string} value
+         */
+        attr(attrName: any, value: string = "") {
+            let el = this.element;
+
+            if (attrName instanceof Object) {
+                for (let i in attrName) {
+                    el.setAttribute(i, attrName[i]);
+                }
+            } else {
+                el.setAttribute(attrName, value);
+            }
+        }
+
         /**
          * Adds the specified class to an element.
          * @param {string} className
@@ -45,6 +65,45 @@ module pl {
          */
         children(): ElementCollection {
             return ElementCollection.fromNodeList(this.element.childNodes);
+        }
+
+        /**
+         * Get the first element that matches the selector by testing the element itself and traversing
+         * up through its ancestors in the DOM tree.
+         * TODO: Remember that exists native method matches in Element.
+         * @param {string} selector
+         * @returns {pl.Element}
+         */
+        closest(selector: string): Element {
+            let el = this;
+
+            while (el && !el.match(selector)) {
+                el = el.parent();
+            }
+            return el ? el : null;
+        }
+
+        /**
+         * Get the value of a computed style property for the element.
+         * @param {any} prop
+         * @param {any} value
+         * @returns {string|null}
+         */
+        css(prop: any, value: any = undefined) {
+            let el = this.element;
+
+            if (prop instanceof Object) {
+                for (let i in prop) {
+                    el.style[i] = prop[i];
+                }
+            } else if ("string" === typeof prop && "string" === typeof value) {
+                el.style[prop] = value;
+
+            } else {
+                let style = window.getComputedStyle ? window.getComputedStyle(el, null) : el['currentStyle'];
+                return style[prop];
+
+            }
         }
 
         /**
@@ -87,6 +146,21 @@ module pl {
         }
 
         /**
+         * Get or set the HTML contents of the element.
+         * @param {any} html
+         * @returns {string}
+         */
+        html(html: any): string {
+            let el = this.element;
+
+            if ("string" === typeof html) {
+                el.innerHTML = html;
+            } else {
+                return el.innerHTML;
+            }
+        }
+
+        /**
          * Insert an HTML structure before a given DOM tree element.
          * @param {HTMLElement|Element} refElem
          */
@@ -106,6 +180,22 @@ module pl {
             let refEl = (refElem instanceof Element) ? refElem.element : refElem;
 
             refEl.parentNode.insertBefore(el, refEl);
+        }
+
+        /**
+         * Returns a boolean it the element would be selected by the specified selector.
+         * TODO: Remember that exists native method matches in Element.
+         * @param {string} selector
+         * @returns {boolean}
+         */
+        match(selector: string): boolean {
+            let el = this.element,
+                nodes = (el['parentNode'] || el['document']).querySelectorAll(selector),
+                i = -1;
+
+            while (nodes[++i] && nodes[i] != el);
+
+            return !!nodes[i];
         }
 
         /**
@@ -158,11 +248,13 @@ module pl {
         }
 
         /**
-         * Get parent element
-         * @returns {pl.Element}
+         * Get parent element.
+         * TODO: Check for possible errors with validation with HTMLDocument.
+         * @returns {pl.Element|null}
          */
         parent(): Element {
-            return new Element(<HTMLElement>this.element.parentNode);
+            let parent = this.element.parentNode;
+            return !(parent instanceof HTMLDocument) && parent ? new Element(<HTMLElement>parent) : null;
         }
 
         /**
@@ -187,6 +279,24 @@ module pl {
             do { if (!filter || filter(el)) { siblings.push(el); } } while (el = el.prevSibling());
 
             return siblings;
+        }
+
+        /**
+         * Remove element from DOM.
+         */
+        remove() {
+            let el = this.element;
+            el.parentNode.removeChild(el);
+        }
+
+        /**
+         * Remove an attribute from element.
+         * @param {string} attrName
+         */
+        removeAttr(attrName: string) {
+            let el = this.element;
+
+            el.removeAttribute(attrName);
         }
 
         /**

@@ -1,13 +1,10 @@
 # TODO List
 
 - [x] Selecting
-- [ ] Traversing
+- [x] Traversing
 - [ ] Manipulation
-- [ ] Attributes
+- [x] Attributes
 - [ ] Styles
-- [ ] Ajax
 - [ ] Events
-- [ ] Effects
-- [ ] Utilities
 - [ ] Add event listener with selector.
 - [ ] Static method to find an element in document
