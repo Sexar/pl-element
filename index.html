@@ -63,42 +63,7 @@
             (function() {
                 'use strict';
 
-                let createElement = function(tag) { return new pl.Element(document.createElement(tag)); }
 
-                let container = createElement('div');
-                let list = createElement('ul');
-                let lastItem = null;
-
-                // Set elements properties.
-                container.toggleClass('container');
-                list.toggleClass('list');
-
-                // Append elements to DOM.
-                document.body.append(container.element);
-                container.append(list);
-
-                // Create list items.
-                for (let i = 0; i < 10; i++) {
-                    let item = createElement('li');
-
-                    item.addClass('item');
-                    item.addClass('item-' + i);
-                    item.text('Item ' + i);
-
-                    list.append( item );
-
-                    if (i === 5)
-                        lastItem = item;
-
-                }
-
-                lastItem.css({
-                    'color': 'red',
-                    'font-style': 'italic',
-                    'text-decoration': 'underline'
-                });
-
-                console.log(lastItem.css('color'));
 
             })();
         </script>

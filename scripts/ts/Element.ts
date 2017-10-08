@@ -6,6 +6,23 @@ module pl {
     export class Element<T extends HTMLElement> {
 
         // region Static
+        /**
+         * Shortcut to create an element instance.
+         * @param {string} tagName
+         * @returns {pl.Element}
+         */
+        static create(tagName = 'div'): Element {
+            let parts = tagName.split('.');
+            let tagName = parts.shift();
+
+            let element = new Element(document.createElement(tagName));
+
+            for (let i = 0; i < parts.length; i++) {
+                element.addClass(parts[i]);
+            }
+
+            return element;
+        }
         // endregion
 
         // region Fields
@@ -235,6 +252,29 @@ module pl {
         }
 
         /**
+         * Get the current coordinates of the element relative to his parent.
+         * @returns {Object}
+         */
+        position(): Object {
+            return {
+                left: this.element.offsetLeft,
+                top: this.element.offsetTop
+            }
+        }
+
+        /**
+         * Get the current coordinates of the element relative to his parent.
+         * @returns {Object}
+         */
+        offset(): Object {
+            let rect = this.element.getBoundingClientRect();
+            let scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+            return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
+        }
+
+        /**
          * Attach an event handler function for selected element.
          * @param {string} type
          * @param {function} handler
@@ -308,6 +348,32 @@ module pl {
 
             if (el.classList) el.classList.remove(className);
             else el.className = el.className.replace(new RegExp("\\b\s?" + className + "\\b"), "");
+        }
+
+        /**
+         * Get or set the current vertical position of the scroll bar for the element.
+         * @param {any} value
+         * @returns {number|null}
+         */
+        scrollLeft(value: any) {
+            if ("number" === typeof value) {
+                this.element.scrollLeft = value;
+            } else {
+                return this.element.scrollLeft;
+            }
+        }
+
+        /**
+         * Get or set the current vertical position of the scroll bar for the element.
+         * @param {any} value
+         * @returns {number|null}
+         */
+        scrollTop(value: any) {
+            if ("number" === typeof value) {
+                this.element.scrollTop = value;
+            } else {
+                return this.element.scrollTop;
+            }
         }
 
         /**
