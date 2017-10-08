@@ -4,8 +4,7 @@
 - [x] Traversing
 - [ ] Manipulation
 - [x] Attributes
-- [ ] Styles
+- [x] Styles
 - [ ] Events
 - [ ] Add event listener with selector.
-- [ ] Static method to find an element in document
-- [ ] Get outerWidth and outerHeight of element
+- [x] Get outerWidth and outerHeight of element

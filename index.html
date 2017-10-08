@@ -63,7 +63,32 @@
             (function() {
                 'use strict';
 
+                let list = pl.Element.create('ul');
+                let collection = pl.ElementCollection();
 
+                // Append list to DOM.
+                document.body.append(list.element);
+
+                // Set list properties.
+                list.attr('id', 'unique-list');
+                list.addClass('list');
+                list.css({
+                    'list-style': 'none',
+                    'margin': '0',
+                    'padding': '0'
+                });
+
+                let i;
+                for (i = 1; i <= 10; i++) {
+                    let li = pl.Element.create('li');
+
+                    li.text("Item " + i);
+
+                    collection.push(li);
+                }
+
+                list.append(collection);
+                // collection.addClass('item');
 
             })();
         </script>

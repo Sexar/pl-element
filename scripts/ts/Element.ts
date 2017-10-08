@@ -70,10 +70,19 @@ module pl {
 
         /**
          * Append an element.
-         * @param {pl.Element} element
+         * @param {any} element
          */
-        append(element: Element) {
-            this.element.appendChild(element.element);
+        append(elements: any) {
+            if (elements instanceof Array) {
+                let i, el;
+
+                for(i = 0; el = elements[i], i < elements.length; i++) {
+                    this.element.appendChild(el.element);
+                }
+
+            } else if (elements instanceof Element) {
+                this.element.appendChild(elements.element);
+            }
         }
 
         /**
@@ -178,6 +187,22 @@ module pl {
         }
 
         /**
+         * Get the current computed inner height for the element, including padding but not border.
+         * @returns {number}
+         */
+        innerHeight(): number {
+            return this.element.clientHeight;
+        }
+
+        /**
+         * Get the current computed inner width for the element, including padding but not border.
+         * @returns {number}
+         */
+        innerWidth(): number {
+            return this.element.clientWidth;
+        }
+
+        /**
          * Insert an HTML structure before a given DOM tree element.
          * @param {HTMLElement|Element} refElem
          */
@@ -249,6 +274,30 @@ module pl {
 
             if ("detachEvent" in el) el['detachEvent'](`on${type}`, handler);
             else el.removeEventListener(type, handler);
+        }
+
+        /**
+         * Get the current computed outer height (including padding, border, and optionally margin) for the element.
+         * @param {boolean} includeMargin
+         * @returns {number}
+         */
+        outerHeight(includeMargin: boolean): number {
+            let marginTop = includeMargin ? parseFloat(this.css('margin-top')) : 0,
+                marginBottom = includeMargin ? parseFloat(this.css('margin-bottom')) : 0;
+
+            return this.element.offsetHeight + marginTop + marginBottom;
+        }
+
+        /**
+         * Get the current computed outer width (including padding, border, and optionally margin) for the element.
+         * @param {boolean} includeMargin
+         * @returns {number}
+         */
+        outerWidth(includeMargin: boolean): number {
+            let marginLeft = includeMargin ? parseFloat(this.css('margin-left')) : 0,
+                marginRight = includeMargin ? parseFloat(this.css('margin-right')) : 0;
+
+            return this.element.offsetHeight + marginLeft + marginRight;
         }
 
         /**
