@@ -63,11 +63,13 @@
             (function() {
                 'use strict';
 
+                let container = pl.Element.create('div.container');
                 let list = pl.Element.create('ul');
                 let collection = pl.ElementCollection();
 
                 // Append list to DOM.
-                document.body.append(list.element);
+                container.append(list);
+                document.body.append(container.element);
 
                 // Set list properties.
                 list.attr('id', 'unique-list');
@@ -87,8 +89,11 @@
                     collection.push(li);
                 }
 
+                collection.addClass('item');
                 list.append(collection);
-                // collection.addClass('item');
+
+                let newLi = pl.Element.create('li.last');
+                list.prepend(newLi);
 
             })();
         </script>

@@ -2,7 +2,7 @@
 
 - [x] Selecting
 - [x] Traversing
-- [ ] Manipulation
+- [x] Manipulation
 - [x] Attributes
 - [x] Styles
 - [ ] Events

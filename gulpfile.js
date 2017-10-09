@@ -72,6 +72,7 @@ gulp.task('ts', () => {
 
     // Output file.
     let outputFile = 'pl-element.min.ts';
+    // let outputFile = 'pl-element.ts';
 
     return gulp.src(srcFiles)
         .pipe(plumber())

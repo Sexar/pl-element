@@ -45,7 +45,7 @@ module pl {
 
             // Set the prototype explicitly.
             // Sigh!! https://github.com/Microsoft/TypeScript/wiki/FAQ#why-doesnt-extending-built-ins-like-error-array-and-map-work
-            Object.setPrototypeOf(this, Array.prototype);
+            Object.setPrototypeOf(this, ElementCollection.prototype);
         }
 
         // region Methods

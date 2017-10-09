@@ -8,14 +8,14 @@ module pl {
         // region Static
         /**
          * Shortcut to create an element instance.
-         * @param {string} tagName
+         * @param {string} tag
          * @returns {pl.Element}
          */
-        static create(tagName = 'div'): Element {
-            let parts = tagName.split('.');
+        static create(tag = 'div'): Element<HTMLElement> {
+            let parts = tag.split('.');
             let tagName = parts.shift();
 
-            let element = new Element(document.createElement(tagName));
+            let element = new Element<HTMLElement>(document.createElement(tagName));
 
             for (let i = 0; i < parts.length; i++) {
                 element.addClass(parts[i]);
@@ -73,7 +73,7 @@ module pl {
          * @param {any} element
          */
         append(elements: any) {
-            if (elements instanceof Array) {
+            if (elements instanceof ElementCollection) {
                 let i, el;
 
                 for(i = 0; el = elements[i], i < elements.length; i++) {
@@ -94,14 +94,23 @@ module pl {
         }
 
         /**
+         * Create a deep copy of a DOM element.
+         * @param {boolean} deep
+         * @returns {pl.Element}
+         */
+        clone(deep: boolean): Element<HTMLElement> {
+            return new Element(<HTMLElement>this.element.cloneNode(deep));
+        }
+
+        /**
          * Get the first element that matches the selector by testing the element itself and traversing
          * up through its ancestors in the DOM tree.
          * TODO: Remember that exists native method matches in Element.
          * @param {string} selector
          * @returns {pl.Element}
          */
-        closest(selector: string): Element {
-            let el = this;
+        closest(selector: string): Element<HTMLElement> {
+            let el: Element<HTMLElement> = this;
 
             while (el && !el.match(selector)) {
                 el = el.parent();
@@ -133,6 +142,13 @@ module pl {
         }
 
         /**
+         * Remove all child nodes of an element from the DOM
+         */
+        empty() {
+            this.element.innerHTML = '';
+        }
+
+        /**
          * Find first element match
          * @param {string} selector
          * @returns {pl.Element}
@@ -152,10 +168,11 @@ module pl {
 
         /**
          * Get first child of element.
-         * @returns {Element}
+         * @returns {Element|null}
          */
-        firstChild(): Element {
-            return new Element(<HTMLElement>this.element.firstChild);
+        firstChild(): Element<HTMLElement>{
+            let firstChild = this.element.firstChild;
+            return firstChild ? new Element(<HTMLElement>this.element.firstChild) : null;
         }
 
         /**
@@ -244,7 +261,7 @@ module pl {
          * Get next sibling.
          * @returns {pl.Element}
          */
-        nextSibling(): Element {
+        nextSibling(): Element<HTMLElement>{
             return this.element.nextSibling
                 ? new Element(<HTMLElement>this.element.nextSibling)
                 : null;
@@ -257,7 +274,7 @@ module pl {
          */
         nextSiblings(filter): ElementCollection {
             let siblings: ElementCollection = new ElementCollection();
-            let el: Element = this.nextSibling();
+            let el: Element<HTMLElement>= this.nextSibling();
 
             do { if (!filter || filter(el)) { siblings.push(el); } } while (el = el.nextSibling());
 
@@ -312,6 +329,17 @@ module pl {
         }
 
         /**
+         * Insert an element at the beginning of the element in context.
+         * @param {pl.Element} element
+         */
+        prepend(element: Element<HTMLElement>) {
+            let el = this.element;
+
+            //el.insertBefore(element.element, el.firstChild);
+            el.insertBefore(element.element, el.childNodes[0]);
+        }
+
+        /**
          * Get the current coordinates of the element relative to his parent.
          * @returns {Object}
          */
@@ -341,7 +369,7 @@ module pl {
          * TODO: Check for possible errors with validation with HTMLDocument.
          * @returns {pl.Element|null}
          */
-        parent(): Element {
+        parent(): Element<HTMLElement>{
             let parent = this.element.parentNode;
             return !(parent instanceof HTMLDocument) && parent ? new Element(<HTMLElement>parent) : null;
         }
@@ -350,7 +378,7 @@ module pl {
          * Get previous sibling.
          * @returns {pl.Element}
          */
-        prevSibling(): Element {
+        prevSibling(): Element<HTMLElement>{
             return this.element.previousSibling
                 ? new Element(<HTMLElement>this.element.previousSibling)
                 : null;
@@ -363,7 +391,7 @@ module pl {
          */
         prevSiblings(filter): ElementCollection {
             let siblings: ElementCollection = new ElementCollection();
-            let el: Element = this.prevSibling();
+            let el: Element<HTMLElement>= this.prevSibling();
 
             do { if (!filter || filter(el)) { siblings.push(el); } } while (el = el.prevSibling());
 
@@ -400,6 +428,16 @@ module pl {
         }
 
         /**
+         * Remove an element from the DOM tree and insert a new one in its place.
+         * @param newElement
+         */
+        replace(newElement: Element<HTMLElement>) {
+            let el = this.element;
+
+            el.parentNode.replaceChild(newElement.element, el);
+        }
+
+        /**
          * Get or set the current vertical position of the scroll bar for the element.
          * @param {any} value
          * @returns {number|null}
@@ -432,8 +470,8 @@ module pl {
          */
         siblings(filter): ElementCollection {
             let siblings: ElementCollection = new ElementCollection();
-            let parent: Element = this.parent();
-            let el: Element = parent.firstChild();
+            let parent: Element<HTMLElement>= this.parent();
+            let el: Element<HTMLElement>= parent.firstChild();
 
             do { if (!filter || filter(el)) siblings.push(el); } while (el = el.nextSibling());
 
@@ -464,6 +502,31 @@ module pl {
             else this.hasClass(className)
                 ? this.removeClass(className)
                 : this.addClass(className);
+        }
+
+        /**
+         * Remove the parents of an element fromthe DOM, leaving the element's content in place.
+         */
+        unwrap() {
+            let el = this.element;
+            let parent = el.parentNode;
+
+            while (el.firstChild) parent.insertBefore(el.firstChild, el);
+
+            parent.removeChild(el);
+        }
+
+        /**
+         * Wrap element into a new container.
+         * @param {pl.Element} container
+         */
+        wrap(container: Element<HTMLElement>) {
+            let el = this.element;
+            let containerEl = container.element;
+
+            el.parentNode.insertBefore(containerEl, el);
+
+            containerEl.appendChild(el);
         }
 
         // endregion
