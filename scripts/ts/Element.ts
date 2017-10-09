@@ -276,7 +276,7 @@ module pl {
             let siblings: ElementCollection = new ElementCollection();
             let el: Element<HTMLElement>= this.nextSibling();
 
-            do { if (!filter || filter(el)) { siblings.push(el); } } while (el = el.nextSibling());
+            do { if (!filter || filter(el)) { siblings.add(el); } } while (el = el.nextSibling());
 
             return siblings;
         }
@@ -393,7 +393,7 @@ module pl {
             let siblings: ElementCollection = new ElementCollection();
             let el: Element<HTMLElement>= this.prevSibling();
 
-            do { if (!filter || filter(el)) { siblings.push(el); } } while (el = el.prevSibling());
+            do { if (!filter || filter(el)) { siblings.add(el); } } while (el = el.prevSibling());
 
             return siblings;
         }
@@ -473,7 +473,7 @@ module pl {
             let parent: Element<HTMLElement>= this.parent();
             let el: Element<HTMLElement>= parent.firstChild();
 
-            do { if (!filter || filter(el)) siblings.push(el); } while (el = el.nextSibling());
+            do { if (!filter || filter(el)) siblings.add(el); } while (el = el.nextSibling());
 
             return siblings;
         }

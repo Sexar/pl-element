@@ -3,7 +3,7 @@
  */
 module pl {
 
-    export class ElementCollection extends Array<Element<HTMLElement>> {
+    export class ElementCollection extends Collection<Element<HTMLElement>> {
 
         // region Static
         /**
@@ -13,10 +13,11 @@ module pl {
          */
         static fromNodeList(list: NodeList): ElementCollection {
             let collection = new ElementCollection();
+            let i, el;
 
-            list.forEach(element => {
-                collection.push(new Element(element as HTMLElement));
-            });
+            for (i = 0; el = list[i], i < list.length; i++) {
+                collection.add(new Element(el as HTMLElement));
+            }
 
             return collection;
         }
@@ -26,12 +27,13 @@ module pl {
          * @param {Array<Element>} list
          * @returns {pl.ElementCollection}
          */
-        static fromArray(list: Array): ElementCollection {
+        static fromArray(list: Array<Element<HTMLElement>>): ElementCollection {
             let collection = new ElementCollection();
+            let i, el;
 
-            list.forEach(element => {
-                collection.push(new Element(element as HTMLElement))
-            });
+            for (i = 0; el = list[i], i < list.length; i++) {
+                collection.add(new Element(el as HTMLElement));
+            }
 
             return collection;
         }
@@ -42,10 +44,6 @@ module pl {
          */
         constructor() {
             super();
-
-            // Set the prototype explicitly.
-            // Sigh!! https://github.com/Microsoft/TypeScript/wiki/FAQ#why-doesnt-extending-built-ins-like-error-array-and-map-work
-            Object.setPrototypeOf(this, ElementCollection.prototype);
         }
 
         // region Methods
@@ -57,9 +55,7 @@ module pl {
         attr(attrName: any, value: string = "") {
             let i, el;
 
-            for (i = 0; el = this[i], i < this.length; i++) {
-                el.attr(attrName, value);
-            }
+            this.each((el, index) => { el.attr(attrName, value); });
         }
 
         /**
@@ -69,21 +65,16 @@ module pl {
         addClass(className: string) {
             let i, el;
 
-            for (i = 0; el = this[i], i < this.length; i++) {
-                console.log(el);
-                el.addClass(className);
-            }
+            this.each((el, index) => { el.addClass(className); });
         }
 
         /**
          * Remove elements from DOM.
          */
-        remove() {
+        removeItems() {
             let i, el;
 
-            for (i = 0; el = this[i], i < this.length; i++) {
-                el.remove();
-            }
+            this.each((el, index) => { el.remove(); });
         }
 
         /**
@@ -93,9 +84,7 @@ module pl {
         removeAttr(attrName: string) {
             let i, el;
 
-            for (i = 0; el = this[i], i < this.length; i++) {
-                el.removeAttribute(attrName);
-            }
+            this.each((el, index) => { el.removeAttr(attrName); });
         }
 
         /**
@@ -105,9 +94,7 @@ module pl {
         removeClass(className: string) {
             let i, el;
 
-            for (i = 0; el = this[i], i < this.length; i++) {
-                el.removeClass(className);
-            }
+            this.each((el, index) => { el.removeClass(className); });
         }
         // endregion
 

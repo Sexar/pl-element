@@ -1,6 +1,3 @@
-/**
- * Created by Sexar on 08/10/2017.
- */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -12,9 +9,254 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 /**
- * Created by cesarmejia on 20/08/2017.
+ * Created by cesarmejia on 08/10/2017.
  */
 var pl;
+(function (pl) {
+    var Collection = /** @class */ (function () {
+        // endregion
+        /**
+         * Create a collection instance.
+         */
+        function Collection() {
+            // region Static
+            // endregion
+            // region Fields
+            /**
+             * Indicates current position in the collection.
+             * @type {number}
+             */
+            this.pointer = 0;
+            /**
+             * Length of collection.
+             * @type {number}
+             * @private
+             */
+            this._length = 0;
+        }
+        // region Methods
+        /**
+         * Adds an element.
+         * @param {T} element
+         */
+        Collection.prototype.add = function (element) {
+            this[this._length++] = element;
+        };
+        /**
+         * Adds an array of elements.
+         * @param {Array<T>} elements
+         */
+        Collection.prototype.addArray = function (elements) {
+            for (var i = 0; i < elements.length; i++) {
+                this.add(elements[i]);
+            }
+        };
+        /**
+         * Adds a collection of elements.
+         * @param {Collection<T>} collection
+         */
+        Collection.prototype.addCollection = function (collection) {
+            for (var i = 0; i < collection.length; i++) {
+                this.add(collection[i]);
+            }
+        };
+        /**
+         * Clears the collection.
+         */
+        Collection.prototype.clear = function () {
+            while (this.length > 0) {
+                this.removeAt(0);
+            }
+        };
+        /**
+         * Returns a value indicating if the specified element is contained.
+         * @param {T} element
+         */
+        Collection.prototype.contains = function (element) {
+            for (var i = 0; i < this.length; i++) {
+                if (this[i] == element)
+                    return true;
+            }
+            return false;
+        };
+        /**
+         * Iterates through the collection.
+         * @param {function} handler
+         */
+        Collection.prototype.each = function (handler) {
+            for (var i = 0; i < this.count; i++) {
+                handler.call(this, this[i], i);
+            }
+        };
+        /**
+         * Gets the index of the specified element if found. -1 if not found.
+         * @param {T} item
+         * @returns {number}
+         */
+        Collection.prototype.indexOf = function (item) {
+            for (var i = 0; i < this.length; i++) {
+                if (this[i] === item) {
+                    return i;
+                }
+            }
+            return -1;
+        };
+        /**
+         * Gets the item at the specified position.
+         * @param {number} index
+         * @returns {T}
+         */
+        Collection.prototype.item = function (index) {
+            return this[index];
+        };
+        /**
+         * Returns the object on current pointer and moves the pointer forward.
+         * It returns null and resets pointer if end of collection reached.
+         * @returns {T}
+         */
+        Collection.prototype.next = function () {
+            if (this.pointer >= this.length) {
+                this.pointer = 0;
+                return null;
+            }
+            return this[this.pointer++];
+        };
+        /**
+         * Removes the specified item from the collection
+         * @param {T} item
+         */
+        Collection.prototype.remove = function (item) {
+            var buffer = [];
+            var index = -1;
+            //region Clear this
+            for (var i = 0; i < this.length; i++) {
+                var t = this[i];
+                delete this[i];
+                if (t === item) {
+                    index = i;
+                }
+                else {
+                    buffer.push(t);
+                }
+            }
+            //endregion
+            //region Apply buffer
+            for (var j = 0; j < buffer.length; j++) {
+                this[j] = buffer[j];
+            }
+            this._length = buffer.length;
+            //endregion
+            return this;
+        };
+        /**
+         * Removes the item ath the specified index
+         * @param {number} index
+         */
+        Collection.prototype.removeAt = function (index) {
+            this.remove(this[index]);
+        };
+        /**
+         * Resets the internal pointer for calls to <c>next()</c> method.
+         */
+        Collection.prototype.resetPointer = function () {
+            this.pointer = 0;
+        };
+        Object.defineProperty(Collection.prototype, "count", {
+            // endregion
+            // region Properties
+            /**
+             * Counter of elements in collection.
+             * @returns {number}
+             */
+            get: function () {
+                return this._length;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Collection.prototype, "first", {
+            /**
+             * Gets the first element of the collection
+             * @returns {T}
+             */
+            get: function () {
+                return this.length > 0 ? this[0] : null;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Collection.prototype, "last", {
+            /**
+             * Gets the last element of the collection
+             * @returns {T}
+             */
+            get: function () {
+                return (this.length > 0 ? this[this.length - 1] : null);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Collection.prototype, "length", {
+            /**
+             * Gets the length of the collection.
+             * @returns {number}
+             */
+            get: function () {
+                return this._length;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return Collection;
+    }());
+    pl.Collection = Collection;
+})(pl || (pl = {}));
+(function (pl) {
+    var Event = /** @class */ (function () {
+        /**
+         * Create a Event instance.
+         * @constructor
+         */
+        function Event() {
+            this._handlers = [];
+            this._scope = this || window;
+        }
+        /**
+         * Add new handler.
+         * @param {function} handler
+         */
+        Event.prototype.add = function (handler) {
+            if (handler) {
+                this._handlers.push(handler);
+            }
+        };
+        /**
+         * Excecute all suscribed handlers.
+         */
+        Event.prototype.fire = function () {
+            var _this = this;
+            var args = arguments;
+            this._handlers.forEach(function (handler) {
+                handler.apply(_this._scope, args);
+            });
+        };
+        /**
+         * Remove handler from handlers.
+         * @param {function} handler
+         */
+        Event.prototype.remove = function (handler) {
+            this._handlers = this._handlers.filter(function (fn) {
+                if (fn != handler)
+                    return fn;
+            });
+        };
+        return Event;
+    }());
+    pl.Event = Event;
+})(pl || (pl = {}));
+/**
+ * Created by cesarmejia on 20/08/2017.
+ */
 (function (pl) {
     var Element = /** @class */ (function () {
         // endregion
@@ -79,7 +321,7 @@ var pl;
          * @param {any} element
          */
         Element.prototype.append = function (elements) {
-            if (elements instanceof Array) {
+            if (elements instanceof pl.ElementCollection) {
                 var i = void 0, el = void 0;
                 for (i = 0; el = elements[i], i < elements.length; i++) {
                     this.element.appendChild(el.element);
@@ -95,6 +337,14 @@ var pl;
          */
         Element.prototype.children = function () {
             return pl.ElementCollection.fromNodeList(this.element.childNodes);
+        };
+        /**
+         * Create a deep copy of a DOM element.
+         * @param {boolean} deep
+         * @returns {pl.Element}
+         */
+        Element.prototype.clone = function (deep) {
+            return new Element(this.element.cloneNode(deep));
         };
         /**
          * Get the first element that matches the selector by testing the element itself and traversing
@@ -156,10 +406,11 @@ var pl;
         };
         /**
          * Get first child of element.
-         * @returns {Element}
+         * @returns {Element|null}
          */
         Element.prototype.firstChild = function () {
-            return new Element(this.element.firstChild);
+            var firstChild = this.element.firstChild;
+            return firstChild ? new Element(this.element.firstChild) : null;
         };
         /**
          * Determine whether any of the matched elements are assigned the given class.
@@ -249,7 +500,7 @@ var pl;
             var el = this.nextSibling();
             do {
                 if (!filter || filter(el)) {
-                    siblings.push(el);
+                    siblings.add(el);
                 }
             } while (el = el.nextSibling());
             return siblings;
@@ -293,6 +544,15 @@ var pl;
                 left: this.element.offsetLeft,
                 top: this.element.offsetTop
             };
+        };
+        /**
+         * Insert an element at the beginning of the element in context.
+         * @param {pl.Element} element
+         */
+        Element.prototype.prepend = function (element) {
+            var el = this.element;
+            //el.insertBefore(element.element, el.firstChild);
+            el.insertBefore(element.element, el.childNodes[0]);
         };
         /**
          * Get the current coordinates of the element relative to his parent.
@@ -346,7 +606,7 @@ var pl;
             var el = this.prevSibling();
             do {
                 if (!filter || filter(el)) {
-                    siblings.push(el);
+                    siblings.add(el);
                 }
             } while (el = el.prevSibling());
             return siblings;
@@ -422,7 +682,7 @@ var pl;
             var el = parent.firstChild();
             do {
                 if (!filter || filter(el))
-                    siblings.push(el);
+                    siblings.add(el);
             } while (el = el.nextSibling());
             return siblings;
         };
@@ -451,6 +711,26 @@ var pl;
                 this.hasClass(className)
                     ? this.removeClass(className)
                     : this.addClass(className);
+        };
+        /**
+         * Remove the parents of an element fromthe DOM, leaving the element's content in place.
+         */
+        Element.prototype.unwrap = function () {
+            var el = this.element;
+            var parent = el.parentNode;
+            while (el.firstChild)
+                parent.insertBefore(el.firstChild, el);
+            parent.removeChild(el);
+        };
+        /**
+         * Wrap element into a new container.
+         * @param {pl.Element} container
+         */
+        Element.prototype.wrap = function (container) {
+            var el = this.element;
+            var containerEl = container.element;
+            el.parentNode.insertBefore(containerEl, el);
+            containerEl.appendChild(el);
         };
         Object.defineProperty(Element.prototype, "element", {
             /**
@@ -488,9 +768,10 @@ var pl;
          */
         ElementCollection.fromNodeList = function (list) {
             var collection = new ElementCollection();
-            list.forEach(function (element) {
-                collection.push(new pl.Element(element));
-            });
+            var i, el;
+            for (i = 0; el = list[i], i < list.length; i++) {
+                collection.add(new pl.Element(el));
+            }
             return collection;
         };
         /**
@@ -500,9 +781,10 @@ var pl;
          */
         ElementCollection.fromArray = function (list) {
             var collection = new ElementCollection();
-            list.forEach(function (element) {
-                collection.push(new pl.Element(element));
-            });
+            var i, el;
+            for (i = 0; el = list[i], i < list.length; i++) {
+                collection.add(new pl.Element(el));
+            }
             return collection;
         };
         // region Methods
@@ -514,9 +796,7 @@ var pl;
         ElementCollection.prototype.attr = function (attrName, value) {
             if (value === void 0) { value = ""; }
             var i, el;
-            for (i = 0; el = this[i], i < this.length; i++) {
-                el.attr(attrName, value);
-            }
+            this.each(function (el, index) { el.attr(attrName, value); });
         };
         /**
          * Adds the specified class to elements in collection.
@@ -524,19 +804,14 @@ var pl;
          */
         ElementCollection.prototype.addClass = function (className) {
             var i, el;
-            for (i = 0; el = this[i], i < this.length; i++) {
-                console.log(el);
-                el.addClass(className);
-            }
+            this.each(function (el, index) { el.addClass(className); });
         };
         /**
          * Remove elements from DOM.
          */
-        ElementCollection.prototype.remove = function () {
+        ElementCollection.prototype.removeItems = function () {
             var i, el;
-            for (i = 0; el = this[i], i < this.length; i++) {
-                el.remove();
-            }
+            this.each(function (el, index) { el.remove(); });
         };
         /**
          * Remove an attribute from elements in collection.
@@ -544,9 +819,7 @@ var pl;
          */
         ElementCollection.prototype.removeAttr = function (attrName) {
             var i, el;
-            for (i = 0; el = this[i], i < this.length; i++) {
-                el.removeAttribute(attrName);
-            }
+            this.each(function (el, index) { el.removeAttr(attrName); });
         };
         /**
          * Remove class from elements in collection.
@@ -554,11 +827,9 @@ var pl;
          */
         ElementCollection.prototype.removeClass = function (className) {
             var i, el;
-            for (i = 0; el = this[i], i < this.length; i++) {
-                el.removeClass(className);
-            }
+            this.each(function (el, index) { el.removeClass(className); });
         };
         return ElementCollection;
-    }(Array));
+    }(pl.Collection));
     pl.ElementCollection = ElementCollection;
 })(pl || (pl = {}));

@@ -65,7 +65,7 @@
 
                 let container = pl.Element.create('div.container');
                 let list = pl.Element.create('ul');
-                let collection = pl.ElementCollection();
+                let collection = new pl.ElementCollection();
 
                 // Append list to DOM.
                 container.append(list);
@@ -86,7 +86,7 @@
 
                     li.text("Item " + i);
 
-                    collection.push(li);
+                    collection.add(li);
                 }
 
                 collection.addClass('item');

@@ -6,5 +6,5 @@
 - [x] Attributes
 - [x] Styles
 - [ ] Events
-- [ ] Add event listener with selector.
 - [x] Get outerWidth and outerHeight of element
+- [ ] Add events to collection
