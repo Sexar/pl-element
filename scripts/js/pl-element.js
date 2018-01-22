@@ -211,21 +211,26 @@ var pl;
     }());
     pl.Collection = Collection;
 })(pl || (pl = {}));
+/**
+ * Created by cesarmejia on 20/08/2017.
+ */
 (function (pl) {
-    var Event = /** @class */ (function () {
+    var PLEvent = /** @class */ (function () {
+        // endregion
         /**
-         * Create a Event instance.
+         * Create a PLEvent instance.
          * @constructor
          */
-        function Event() {
+        function PLEvent() {
             this._handlers = [];
             this._scope = this || window;
         }
+        // region Methods
         /**
          * Add new handler.
          * @param {function} handler
          */
-        Event.prototype.add = function (handler) {
+        PLEvent.prototype.add = function (handler) {
             if (handler) {
                 this._handlers.push(handler);
             }
@@ -233,7 +238,7 @@ var pl;
         /**
          * Excecute all suscribed handlers.
          */
-        Event.prototype.fire = function () {
+        PLEvent.prototype.fire = function () {
             var _this = this;
             var args = arguments;
             this._handlers.forEach(function (handler) {
@@ -244,15 +249,15 @@ var pl;
          * Remove handler from handlers.
          * @param {function} handler
          */
-        Event.prototype.remove = function (handler) {
+        PLEvent.prototype.remove = function (handler) {
             this._handlers = this._handlers.filter(function (fn) {
                 if (fn != handler)
                     return fn;
             });
         };
-        return Event;
+        return PLEvent;
     }());
-    pl.Event = Event;
+    pl.PLEvent = PLEvent;
 })(pl || (pl = {}));
 /**
  * Created by cesarmejia on 20/08/2017.
@@ -692,8 +697,8 @@ var pl;
          * @returns {undefined|text}
          */
         Element.prototype.text = function (value) {
-            if ("string" === typeof value) {
-                this._element.innerText = value;
+            if ("undefined" !== typeof value) {
+                this._element.innerText = String(value);
             }
             else {
                 return this._element.innerText;
@@ -713,7 +718,25 @@ var pl;
                     : this.addClass(className);
         };
         /**
-         * Remove the parents of an element fromthe DOM, leaving the element's content in place.
+         * Execute all handlers and behaviors attached to the matched elements for the given event type.
+         * @param {string} type
+         */
+        Element.prototype.trigger = function (type) {
+            if ('createEvent' in document) {
+                // Modern browsers, IE9+
+                var ev = document.createEvent('HTMLEvents');
+                ev.initEvent(type, false, true);
+                this._element.dispatchEvent(ev);
+            }
+            else {
+                // IE8
+                // let ev = document.createEventObject();
+                // ev.eventType = type;
+                // this._element.fireEvent(`on${ type }`);
+            }
+        };
+        /**
+         * Remove the parents of an element from the DOM, leaving the element's content in place.
          */
         Element.prototype.unwrap = function () {
             var el = this.element;
@@ -776,14 +799,19 @@ var pl;
         };
         /**
          * Create an element collection from an array.
-         * @param {Array<Element>} list
+         * @param {Array<any>} list
          * @returns {pl.ElementCollection}
          */
         ElementCollection.fromArray = function (list) {
             var collection = new ElementCollection();
             var i, el;
             for (i = 0; el = list[i], i < list.length; i++) {
-                collection.add(new pl.Element(el));
+                if (el instanceof pl.Element) {
+                    collection.add(el);
+                }
+                else if (el instanceof HTMLElement) {
+                    collection.add(new pl.Element(el));
+                }
             }
             return collection;
         };
